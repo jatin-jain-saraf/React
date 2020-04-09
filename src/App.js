@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import './App.css';
 import Greet from './components/Greet'
 import Welcome from './components/Welcome';
@@ -10,10 +10,11 @@ import LifeCycleA from './components/LifeCycleA';
 import FunctionClick from './components/FunctionClick';
 import Exercise2 from './components/Exercise2';
 import ClassComponentClick from './components/ClassComponentClick';
-function App() {
-  return (
-    <div className="App">
-      {/* <Greet />
+class App extends Component {
+  render() {
+    return (
+      <div className="App">
+        {/* <Greet />
 
       <Hello name="Jatin" heroName="Thor" >
       <p>This is Children props</p>
@@ -25,15 +26,17 @@ function App() {
       <Welcome name='Jatin' heroName='Thor'/> 
       <Message />
       <Counter></Counter>
-       <Watch /> */}
-      {/* <LifeCycleA />
+        */}
+        <Watch />
+        {/* <LifeCycleA />
        */}
-      <Exercise2></Exercise2>
-      <FunctionClick />
+        {/* <Exercise2 /> */}
+        {/* <FunctionClick /> */}
 
-      <ClassComponentClick></ClassComponentClick>
-    </div>
-  );
+        {/* <ClassComponentClick></ClassComponentClick> */}
+      </div>
+    );
+  }
 }
 
 export default App;
