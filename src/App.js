@@ -27,10 +27,10 @@ class App extends Component {
       <Message />
       <Counter></Counter>
         */}
-        <Watch />
+        {/* <Watch /> */}
         {/* <LifeCycleA />
        */}
-        {/* <Exercise2 /> */}
+        <Exercise2 />
         {/* <FunctionClick /> */}
 
         {/* <ClassComponentClick></ClassComponentClick> */}
