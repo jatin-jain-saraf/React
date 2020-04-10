@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import Input from './Input'
+import Input from '../Input'
 
 class FocusInput extends Component {
     constructor(props) {
