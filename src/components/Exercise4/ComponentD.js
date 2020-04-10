@@ -6,11 +6,13 @@ class ComponentD extends Component {
         return (
             <UserConsumer>
                 {
-                    (username) => {
-                        return <h1>Hello {username}</h1>
+                    ({ count, Count }) => {
+                        return <React.Fragment>
+                            <h1>{count}</h1>
+                            <button onClick={Count}>Click</button>
+                        </React.Fragment>
                     }
                 }
-
             </UserConsumer>
         )
     }

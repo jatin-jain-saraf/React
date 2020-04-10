@@ -1,13 +1,9 @@
-import React from 'react'
+import { createContext } from 'react'
 
-
-
-const UserContext = React.createContext('JJS')
-
+const UserContext = createContext()
 
 const UserProvider = UserContext.Provider
 const UserConsumer = UserContext.Consumer
 
-
-export { UserProvider, UserConsumer }
+export {UserProvider, UserConsumer}
 export default UserContext

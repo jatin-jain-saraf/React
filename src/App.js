@@ -1,35 +1,35 @@
 import React, { Component } from 'react';
-// import ClickCounter2 from './components/ClickCounter2';
-// import HoverCounter2 from './components/HoverCounter2';
-// import User from './components/User';
-// import RenderPropsCounter from './components/RenderPropsCounter';
-// import ClickCounter from './components/ClickCounter';
+// import ClickCounter2 from './components/Render/ClickCounter2';
+// import HoverCounter2 from './components/Render/HoverCounter2';
+// import User from './components/Render/User';
+// import RenderPropsCounter from './components/Render/RenderPropsCounter';
+// import ClickCounter from './components/Hoc/ClickCounter';
 // import './App.css';
-// import Greet from './components/Greet'
-// import Welcome from './components/Welcome';
-// import Hello from './components/Hello';
+// import Greet from './components/IntroductionGreet'
+// import Welcome from './components/Introduction/Welcome';
+// import Hello from './components/Introduction/Hello';
 // import Message from './components/Message';
 // import Counter from './components/Counter';
 // import Watch from './components/Exercise1/Watch';
-// import LifeCycleA from './components/LifeCycleA';
+// import LifeCycleA from './components/LifeCycle/LifeCycleA';
 // import FunctionClick from './components/FunctionClick';
 // import Exercise2 from './components/Exercise2/Exercise2';
 // import ClassComponentClick from './components/ClassComponentClick';
-// import EventBind from './components/EventBind';
-// import ParentComponent from './components/ParentComponent';
-// import UserGreeting from './components/UserGreeting';
-// import NameList from './components/NameList';
-// import Form from './components/Form'
-// import StyleSheet from './components/StyleSheet'
-// import FragmentDemo from './components/FragmentDemo';
-// import Table from './components/Table';
-// import Parent from './components/Parent';
-// import PureComp from './components/PureComp';
-// import MemoCompo from './components/MemoCompo';
-// import RefDemo from './components/RefDemo'
-// import FocusInput from './components/FocusInput';
-// import Exercise3Parent from './components/Exercise/Exercise3Parent';
-// import HoverCounter from './components/HoverCounter';
+// import EventBind from './components/EventBinding/EventBind';
+// import ParentComponent from './components/PureComponent/ParentComponent';
+// import UserGreeting from './components/ConditionalRendering/UserGreeting';
+// import NameList from './components/ListKeys/NameList';
+// import Form from './components/ErrorBoundries/Form'
+// import StyleSheet from './components/Styling/StyleSheet'
+// import FragmentDemo from './components/Fragments/FragmentDemo';
+// import Table from './components/Fragments/Table';
+// import Parent from './components/PureComponent/Parent';
+// import PureComp from './components/PureComponent/PureComp';
+// import MemoCompo from './components/Memo/MemoCompo';
+// import RefDemo from './components/Refs/RefDemo'
+// import FocusInput from './components/Refs/FocusInput';
+// import Exercise3Parent from './components/Exercise3/Exercise3Parent';
+// import HoverCounter from './components/Hoc/HoverCounter';
 // import FRIParentInput from './components/FRIParentInput';
 // import PortalDemo from './components/PortalDemo';
 import ComponentA from './components/Exercise4/ComponentA'
@@ -40,12 +40,9 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        
 
-        <UserProvider value="Jatin">
           <ComponentA />
-        </UserProvider>
-
-
 
 
 
