@@ -112,13 +112,13 @@ export class AgGrid extends Component {
       ],
     };
     this.searchData = this.searchData.bind(this);
-    this.delete = this.delete.bind(this)
+    // this.delete = this.delete.bind(this)
 
   }
-  delete() {
-    console.log('delete');
+  // delete() {
+  //   console.log('delete');
 
-  }
+  // }
   componentWillMount() {
     this.setState({
       filterData: this.state.rowData
