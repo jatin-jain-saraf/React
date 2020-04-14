@@ -32,17 +32,20 @@ import React, { Component } from 'react';
 // import HoverCounter from './components/Hoc/HoverCounter';
 // import FRIParentInput from './components/FRIParentInput';
 // import PortalDemo from './components/PortalDemo';
-import ComponentA from './components/Exercise4/ComponentA'
-import { UserProvider } from './components/Exercise4/UserContext';
+// import ComponentA from './components/Exercise4/ComponentA'
+// import { UserProvider } from './components/Exercise4/UserContext';
+// import AgGrid from './components/Ag-Grid/AgGrid'
+// import Demo from './components/Ag-Grid/Demo'
+import AgGrid from './components/Ag-Grid/AgGrid';
 
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        
 
-          <ComponentA />
+
+        <AgGrid />
 
 
 
