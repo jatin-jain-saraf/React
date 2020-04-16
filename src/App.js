@@ -36,7 +36,7 @@ import React, { Component } from 'react';
 // import { UserProvider } from './components/Exercise4/UserContext';
 // import AgGrid from './components/Ag-Grid/AgGrid'
 // import Demo from './components/Ag-Grid/Demo'
-import AgGrid from './components/Ag-Grid/AgGrid';
+import Aggrid from './components/Ag-Grid/Aggrid';
 
 
 class App extends Component {
@@ -45,7 +45,7 @@ class App extends Component {
       <div className="App">
 
 
-        <AgGrid />
+        <Aggrid />
 
 
 
