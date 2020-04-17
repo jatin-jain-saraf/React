@@ -4,10 +4,9 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import '@elastic/eui/dist/eui_theme_light.css'
 import { EuiIcon, EuiButtonIcon, EuiPopover, EuiSwitch, EuiSpacer } from '@elastic/eui';
-import Pagination from './Pagination';
 import ComboBox from './ComboBox';
 let api = '';
-export class Aggrid extends Component {
+class Aggrid extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -38,8 +37,11 @@ export class Aggrid extends Component {
                 headerName: "Actions", field: "action",
                 cellRendererFramework: function (params) {
                     const deleteRow = () => {
+                        // const selectedRows = api.getSelectedNodes()
+                        // const selectedRow = selectedRows[0]
                         const selectedData = api.getSelectedRows();
                         api.updateRowData({ remove: selectedData });
+
                     }
                     return (
                         <>
@@ -62,8 +64,14 @@ export class Aggrid extends Component {
                 filter: true,
                 colResizeDefault: 'shift',
                 autoHeight: true,
-                rowHeight: 500
+                rowHeight: 500,
+                enablePivot: true,
+                enableValue: true,
             },
+            paginationNumberFormatter: function (params) {
+                return '[' + params.value.toLocaleString() + ']';
+            },
+            filterData: [],
             rowData: [{
                 firstName: "Hardik",
                 lastName: "Motwani",
@@ -149,15 +157,22 @@ export class Aggrid extends Component {
         this.searchData = this.searchData.bind(this);
         this.rowHeight = 200;
     }
+
+
     componentDidMount() {
         this.setState({
             filterData: this.state.rowData
 
         })
     }
+    updateData = data => {
+        this.setState({ rowData: data })
+        api.paginationGoToPage(4)
+    }
     onGridReady = params => {
         api = params.api;
         this.columnApi = params.columnApi;
+
     }
     onButtonClick = e => {
         const selectedNodes = api.getSelectedNodes()
@@ -181,35 +196,42 @@ export class Aggrid extends Component {
             isPopoverOpen: false,
         });
     }
-    manage = () => {
+    PopOver = () => {
         this.setState({
             isPopoverOpen: !this.state.isPopoverOpen,
         });
     }
-    display(value, col, set) {
+    displayPopOver(value, col, set) {
         this.setState({
             [set]: value,
         })
         this.columnApi.setColumnVisible(col, value)
     }
 
-    update(e) {
-        // console.log(this.columnApi.getColumn('firstName').visible);
-
+    updatePopOver(e) {
         this.setState({
-            isFirstName: this.columnApi.getColumn('firstName').visible
-
+            isFirstName: this.columnApi.getColumn('firstName').visible,
+            isLastName: this.columnApi.getColumn('lastName').visible,
+            isBranch: this.columnApi.getColumn('branch').visible,
+            isDob: this.columnApi.getColumn('dateOfBirth').visible,
+            isConatct: this.columnApi.getColumn('contact').visible,
+            isEmail: this.columnApi.getColumn('email').visible,
+            isAction: this.columnApi.getColumn('action').visible,
+            isTags: this.columnApi.getColumn('tags').visible,
         })
 
     }
-
+    onPageSizeChanged = newPageSize => {
+        const value = document.getElementById('page-size').value;
+        api.paginationSetPageSize(Number(value));
+    };
     render() {
         const button = (
             <EuiButtonIcon
                 iconType="managementApp"
                 iconSize="original"
                 // iconSide="right"
-                onClick={this.manage.bind(this)}
+                onClick={this.PopOver.bind(this)}
             >
             </EuiButtonIcon>
         );
@@ -236,49 +258,49 @@ export class Aggrid extends Component {
                             <EuiSwitch
                                 label="FirstName"
                                 checked={isFirstName}
-                                onChange={e => this.display(e.target.checked, 'firstName', "isFirstName")}
+                                onChange={e => this.displayPopOver(e.target.checked, 'firstName', "isFirstName")}
                             />
                             <EuiSpacer size="s" />
                             <EuiSwitch
                                 label="LastName"
                                 checked={isLastName}
-                                onChange={e => this.display(e.target.checked, 'lastName', "isLastName")}
+                                onChange={e => this.displayPopOver(e.target.checked, 'lastName', "isLastName")}
                             />
                             <EuiSpacer size="s" />
                             <EuiSwitch
                                 label="Branch"
                                 checked={isBranch}
-                                onChange={e => this.display(e.target.checked, 'branch', "isBranch")}
+                                onChange={e => this.displayPopOver(e.target.checked, 'branch', "isBranch")}
                             />
                             <EuiSpacer size="s" />
                             <EuiSwitch
                                 label="DateOfBirth"
                                 checked={isDob}
-                                onChange={e => this.display(e.target.checked, 'dateOfBirth', "isDob")}
+                                onChange={e => this.displayPopOver(e.target.checked, 'dateOfBirth', "isDob")}
                             />
                             <EuiSpacer size="s" />
                             <EuiSwitch
                                 label="Contact"
                                 checked={isConatct}
-                                onChange={e => this.display(e.target.checked, 'contact', "isConatct")}
+                                onChange={e => this.displayPopOver(e.target.checked, 'contact', "isConatct")}
                             />
                             <EuiSpacer size="s" />
                             <EuiSwitch
                                 label="Email"
                                 checked={isEmail}
-                                onChange={e => this.display(e.target.checked, 'email', "isEmail")}
+                                onChange={e => this.displayPopOver(e.target.checked, 'email', "isEmail")}
                             />
                             <EuiSpacer size="s" />
                             <EuiSwitch
                                 label="Action"
                                 checked={isAction}
-                                onChange={e => this.display(e.target.checked, 'action', "isAction")}
+                                onChange={e => this.displayPopOver(e.target.checked, 'action', "isAction")}
                             />
                             <EuiSpacer size="s" />
                             <EuiSwitch
                                 label="Tags"
                                 checked={isTags}
-                                onChange={e => this.display(e.target.checked, 'tags', "isTags")}
+                                onChange={e => this.displayPopOver(e.target.checked, 'tags', "isTags")}
                             />
                         </div >
                     </EuiPopover>
@@ -291,12 +313,26 @@ export class Aggrid extends Component {
                     rowDataChangeDetectionStrategy='IdentityCheck'
                     onGridReady={this.onGridReady}
                     rowSelection="multiple"
-                    enableCellChangeFlash={true}
-                    onDragStopped={e => this.update(e)}
-
+                    onDragStopped={e => this.updatePopOver(e)}
+                    pagination={true}
                 >
                 </AgGridReact>
-                <Pagination />
+                <div className="test-header">
+                    Rows per page:
+                <select onChange={() => this.onPageSizeChanged()} id="page-size">
+                        <option value="2" selected="">2 </option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10" selected>10</option>
+                        <option value="20" selected>20</option>
+
+                    </select>
+                </div>
                 <button className=" btn btn-primary p-2 m-2 " onClick={this.onButtonClick}>Get selected rows</button>
 
             </div >
@@ -305,3 +341,4 @@ export class Aggrid extends Component {
 }
 
 export default Aggrid
+
