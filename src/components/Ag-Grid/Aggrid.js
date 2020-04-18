@@ -1,16 +1,19 @@
 import React, { Component } from 'react'
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import 'ag-grid-community/dist/styles/ag-theme-balham-dark.css';
 import '@elastic/eui/dist/eui_theme_light.css'
-import { EuiIcon, EuiButtonIcon, EuiPopover, EuiSwitch, EuiSpacer } from '@elastic/eui';
-import ComboBox from './ComboBox';
+import ComboBox from './ComboBox'
+import Delete from './Delete'
+import FilterBox from './FilterBox';
+import Popover from './Popover';
+import Pagination from './Pagination';
 let api = '';
 class Aggrid extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            isPopoverOpen: false,
+            isPopoverOpen:false,
             isFirstName: true,
             IsFirstNameDisplay: true,
             isLastName: true,
@@ -34,25 +37,9 @@ class Aggrid extends Component {
             }, {
                 headerName: "Email", field: "email",
             }, {
-                headerName: "Actions", field: "action",
-                cellRendererFramework: function (params) {
-                    const deleteRow = () => {
-                        // const selectedRows = api.getSelectedNodes()
-                        // const selectedRow = selectedRows[0]
-                        const selectedData = api.getSelectedRows();
-                        api.updateRowData({ remove: selectedData });
-
-                    }
-                    return (
-                        <>
-                            <EuiIcon type="trash" onClick={deleteRow} />
-                        </>
-                    )
-                }
+                headerName: "Actions", field: "action", cellRendererFramework: (params) => <Delete delete={this.deleteRow} />
             }, {
-                headerName: "Tags", field: "tags", width: 400, cellRendererFramework: function () {
-                    return <ComboBox />
-                }
+                headerName: "Tags", field: "tags", width: 400, cellRendererFramework: () => <ComboBox />
             },
             ],
             defaultColDef: {
@@ -151,11 +138,53 @@ class Aggrid extends Component {
                 dateOfBirth: "30-03-1997",
                 contact: 9867542310,
                 email: "kanewilliamson@gmail.com"
+            },
+            {
+                firstName: "Alia",
+                lastName: "Bhatt",
+                branch: "IT",
+                dateOfBirth: "22-06-1998",
+                contact: 8460123456,
+                email: "alia.bhatt@rapidops.com"
+            },
+            {
+                firstName: "Vaibhav",
+                lastName: "Kabira",
+                branch: "IT",
+                dateOfBirth: "13-05-1999",
+                contact: 9876512344,
+                email: "kabira.vaibhav@gmail.com"
+            },
+            {
+                firstName: "Ananya",
+                lastName: "Pandey",
+                branch: "CS",
+                dateOfBirth: "29-09-1999",
+                contact: 8488898765,
+                email: "ananya.pandey@gmail.com"
+            },
+            {
+                firstName: "Joe",
+                lastName: "Dawson",
+                branch: "CS",
+                dateOfBirth: "17-07-1997",
+                contact: 9988666756,
+                email: "joe.dawson@gmail.com"
+            },
+            {
+                firstName: "Kane",
+                lastName: "Williamson",
+                branch: "IT",
+                dateOfBirth: "30-03-1997",
+                contact: 9867542310,
+                email: "kanewilliamson@gmail.com"
             }
             ],
         };
         this.searchData = this.searchData.bind(this);
         this.rowHeight = 200;
+        this.PopOver = this.PopOver.bind(this)
+        this.closePopover = this.closePopover.bind(this)
     }
 
 
@@ -164,6 +193,10 @@ class Aggrid extends Component {
             filterData: this.state.rowData
 
         })
+    }
+    deleteRow = () => {
+        const selectedData = api.getSelectedRows();
+        api.updateRowData({ remove: selectedData });
     }
     updateData = data => {
         this.setState({ rowData: data })
@@ -191,7 +224,7 @@ class Aggrid extends Component {
             filterData: updateList
         })
     }
-    closePopover() {
+    closePopover = () => {
         this.setState({
             isPopoverOpen: false,
         });
@@ -201,14 +234,14 @@ class Aggrid extends Component {
             isPopoverOpen: !this.state.isPopoverOpen,
         });
     }
-    displayPopOver(value, col, set) {
+    displayPopOver = (value, col, set) => {
         this.setState({
             [set]: value,
         })
         this.columnApi.setColumnVisible(col, value)
     }
 
-    updatePopOver(e) {
+    updatePopOver = (e) => {
         this.setState({
             isFirstName: this.columnApi.getColumn('firstName').visible,
             isLastName: this.columnApi.getColumn('lastName').visible,
@@ -219,93 +252,40 @@ class Aggrid extends Component {
             isAction: this.columnApi.getColumn('action').visible,
             isTags: this.columnApi.getColumn('tags').visible,
         })
-
     }
     onPageSizeChanged = newPageSize => {
         const value = document.getElementById('page-size').value;
         api.paginationSetPageSize(Number(value));
     };
     render() {
-        const button = (
-            <EuiButtonIcon
-                iconType="managementApp"
-                iconSize="original"
-                // iconSide="right"
-                onClick={this.PopOver.bind(this)}
-            >
-            </EuiButtonIcon>
-        );
-        const { columnDefs, defaultColDef, filterData, isFirstName, isLastName,
-            isAction, isBranch, isConatct, isDob, isEmail, isTags, } = this.state
+        const { columnDefs, defaultColDef, filterData } = this.state
         return (
             <div
-                className="ag-theme-balham"
+                className="ag-theme-balham-dark"
                 style={{
-                    height: '45vh',
+                    height: '55vh',
                     width: '100%'
                 }}
             >
                 <h2 className="bg-dark display-4 text-light" >Ag-Grid</h2>
                 <div style={{ float: 'right' }}>
-                    <EuiPopover
-                        ownFocus
-                        button={button}
-                        // panelPaddingSize='none'
+                    <Popover
+                        isFirstName={this.state.isFirstName}
+                        isLastName={this.state.isLastName}
+                        isBranch={this.state.isBranch}
+                        isDob={this.state.isDob}
+                        isConatct={this.state.isConatct}
+                        isEmail={this.state.isEmail}
+                        isAction={this.state.isAction}
+                        isTags={this.state.isTags}
                         isOpen={this.state.isPopoverOpen}
-                        closePopover={this.closePopover.bind(this)}
-                    >
-                        <div>
-                            <EuiSwitch
-                                label="FirstName"
-                                checked={isFirstName}
-                                onChange={e => this.displayPopOver(e.target.checked, 'firstName', "isFirstName")}
-                            />
-                            <EuiSpacer size="s" />
-                            <EuiSwitch
-                                label="LastName"
-                                checked={isLastName}
-                                onChange={e => this.displayPopOver(e.target.checked, 'lastName', "isLastName")}
-                            />
-                            <EuiSpacer size="s" />
-                            <EuiSwitch
-                                label="Branch"
-                                checked={isBranch}
-                                onChange={e => this.displayPopOver(e.target.checked, 'branch', "isBranch")}
-                            />
-                            <EuiSpacer size="s" />
-                            <EuiSwitch
-                                label="DateOfBirth"
-                                checked={isDob}
-                                onChange={e => this.displayPopOver(e.target.checked, 'dateOfBirth', "isDob")}
-                            />
-                            <EuiSpacer size="s" />
-                            <EuiSwitch
-                                label="Contact"
-                                checked={isConatct}
-                                onChange={e => this.displayPopOver(e.target.checked, 'contact', "isConatct")}
-                            />
-                            <EuiSpacer size="s" />
-                            <EuiSwitch
-                                label="Email"
-                                checked={isEmail}
-                                onChange={e => this.displayPopOver(e.target.checked, 'email', "isEmail")}
-                            />
-                            <EuiSpacer size="s" />
-                            <EuiSwitch
-                                label="Action"
-                                checked={isAction}
-                                onChange={e => this.displayPopOver(e.target.checked, 'action', "isAction")}
-                            />
-                            <EuiSpacer size="s" />
-                            <EuiSwitch
-                                label="Tags"
-                                checked={isTags}
-                                onChange={e => this.displayPopOver(e.target.checked, 'tags', "isTags")}
-                            />
-                        </div >
-                    </EuiPopover>
+                        closePopover={this.closePopover}
+                        PopOver={this.PopOver}
+                        displayPopOver={this.displayPopOver}
+                    />
                 </div>
-                <input className="p-2 m-2 " type="text" onChange={this.searchData} placeholder="Search" />
+                <FilterBox searchData={this.searchData} />
+                {/* <input className="p-2 m-2 " type="text" onChange={this.searchData} placeholder="Search" /> */}
                 <AgGridReact
                     columnDefs={columnDefs}
                     rowData={filterData}
@@ -317,28 +297,9 @@ class Aggrid extends Component {
                     pagination={true}
                 >
                 </AgGridReact>
-                <div className="test-header">
-                    Rows per page:
-                <select onChange={() => this.onPageSizeChanged()} id="page-size">
-                        <option value="2" selected="">2 </option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10" selected>10</option>
-                        <option value="20" selected>20</option>
-
-                    </select>
-                </div>
-                <button className=" btn btn-primary p-2 m-2 " onClick={this.onButtonClick}>Get selected rows</button>
-
+                <Pagination onPageSizeChanged={this.onPageSizeChanged} onButtonClick={this.onButtonClick} />
             </div >
         );
     }
 }
-
 export default Aggrid
-

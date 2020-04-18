@@ -1,96 +1,31 @@
 
-import React, { useState } from 'react';
+import React, { Component } from 'react'
 
-import {
-    EuiButtonEmpty,
-    EuiContextMenuItem,
-    EuiContextMenuPanel,
-    EuiFlexGroup,
-    EuiFlexItem,
-    EuiPagination,
-    EuiPopover,
-} from '@elastic/eui';
-export default () => {
-    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-    const [activePage, setActivePage] = useState(0);
+class Pagination extends Component {
+    render() {
+        const { onPageSizeChanged, onButtonClick } = this.props
+        return (
+            <div>
+                <div className="test-header text-dark">
+                    Rows per page:
+                <select onChange={() => onPageSizeChanged()} id="page-size">
+                        <option value="2">2 </option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10" defaultValue="">10</option>
+                        <option value="20">20</option>
 
-    const PAGE_COUNT = 10;
+                    </select>
+                </div>
+                <button className=" btn btn-primary p-2 m-2 " onClick={onButtonClick}>Get selected rows</button>
+            </div>
+        )
+    }
+}
 
-    const onButtonClick = () => setIsPopoverOpen(isPopoverOpen => !isPopoverOpen);
-    const closePopover = () => setIsPopoverOpen(false);
-
-    const goToPage = pageNumber => setActivePage(pageNumber);
-
-    const button = (
-        <EuiButtonEmpty
-            size="s"
-            color="text"
-            iconType="arrowDown"
-            iconSide="right"
-            onClick={onButtonClick}>
-            Rows per page: 50
-    </EuiButtonEmpty>
-    );
-
-    const items = [
-        <EuiContextMenuItem
-            key="10 rows"
-            icon="empty"
-            onClick={() => {
-                closePopover();
-                window.alert('10 rows');
-            }}>
-            10 rows
-    </EuiContextMenuItem>,
-        <EuiContextMenuItem
-            key="20 rows"
-            icon="check"
-            onClick={() => {
-                closePopover();
-                window.alert('20 rows');
-            }}>
-            20 rows
-    </EuiContextMenuItem>,
-        <EuiContextMenuItem
-            key="50 rows"
-            icon="empty"
-            onClick={() => {
-                closePopover();
-                window.alert('50 rows');
-            }}>
-            50 rows
-    </EuiContextMenuItem>,
-        <EuiContextMenuItem
-            key="100 rows"
-            icon="empty"
-            onClick={() => {
-                closePopover();
-                window.alert('100 rows');
-            }}>
-            100 rows
-    </EuiContextMenuItem>,
-    ];
-
-    return (
-        <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
-            <EuiFlexItem grow={false}>
-                <EuiPopover
-                    button={button}
-                    isOpen={isPopoverOpen}
-                    closePopover={closePopover}
-                    panelPaddingSize="none">
-                    <EuiContextMenuPanel items={items} />
-                </EuiPopover>
-            </EuiFlexItem>
-
-            <EuiFlexItem grow={false}>
-                <EuiPagination
-                    pageCount={PAGE_COUNT}
-                    activePage={activePage}
-                    onPageClick={goToPage}
-                />
-            </EuiFlexItem>
-        </EuiFlexGroup>
-    );
-};
-
+export default Pagination
