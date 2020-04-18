@@ -8,44 +8,21 @@ import { EuiFlexGroup } from '@elastic/eui';
 
 
 const options = [
-    {
-        label: 'motwani',
-        'data-test-subj': 'titanOption',
-    },
-    {
-        label: 'Enceladus',
-    },
-    {
-        label: 'meet',
-    },
-    {
-        label: 'Dione',
-    },
-    {
-        label: 'ravi',
-    },
-    {
-        label: 'Phoebe',
-    },
-    {
-        label: 'Rhea',
-    },
-    {
-        label:
-            "Pandora is one of Saturn's moons, named for a Titaness of Greek mythology",
-    },
-    {
-        label: 'Tethys',
-    },
-    {
-        label: 'Hyperion',
-    },
-];
+    { label: 'motwani', 'data-test-subj': 'titanOption' },
+    { label: 'Enceladus' },
+    { label: 'meet' },
+    { label: 'Dione' },
+    { label: 'ravi' },
+    { label: 'Phoebe' },
+    { label: 'Rhea' },
+    { label: "Pandora is one of Saturn's moons, named for a Titaness of Greek mythology" },
+    { label: 'Tethys' },
+    { label: 'Hyperion' },];
 
 export default () => {
 
     const [selectedOptions, setSelected] = useState([options[2], options[4]]);
-   
+
     const onChange = selectedOptions => {
         setSelected(selectedOptions);
     };
