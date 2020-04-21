@@ -6,22 +6,27 @@ import '@elastic/eui/dist/eui_theme_light.css'
 import ComboBox from './ComboBox'
 import Delete from './Delete'
 import FilterBox from './FilterBox';
-import Popover from './Popover';
-import Pagination from './Pagination';
+// import Popover from './Popover';
+import Pagination from './StaticPagination';
+import DynamicPopover from './DynamicPopover'
+import Flyout from './Flyout';
+// import Flyout from './Flyout';
 let api = '';
 class Aggrid extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            paginationPageSize: 5, pageCount: null, isPopoverOpen: false, isFirstName: true, IsFirstNameDisplay: true, isLastName: true, isBranch: true, isDob: true, isConatct: true, isEmail: true, isAction: true, isTags: true, filterData: null,
-            columnDefs: [{ headerName: "FirstName", field: "firstName", checkboxSelection: true, hide: false, },
+            isFlyoutVisible: true,
+            rowSelected: false,
+            colState: null, paginationPageSize: 5, pageCount: null, IsFirstNameDisplay: true, filterData: null,
+            columnDefs: [{ headerName: "FirstName", field: "firstName", hide: false, },
             { headerName: "LastName", field: "lastName" },
             { headerName: "Branch", field: "branch" },
             { headerName: "DateOfBirth", field: "dateOfBirth" },
             { headerName: "Contact", field: "contact" },
             { headerName: "Email", field: "email" },
             { headerName: "Actions", field: "action", cellRendererFramework: (params) => <Delete delete={this.deleteRow} /> },
-            { headerName: "Tags", field: "tags", width: 400, cellRendererFramework: () => <ComboBox /> },],
+            { headerName: "Tags", field: "tags", width: 300, cellRendererFramework: () => <ComboBox /> },],
             defaultColDef: {
                 width: 150, height: 100, editable: true, resizable: true, sortable: true, filter: true, colResizeDefault: 'shift', autoHeight: true, rowHeight: 500, enablePivot: true, enableValue: true,
             },
@@ -44,8 +49,6 @@ class Aggrid extends Component {
         };
         this.searchData = this.searchData.bind(this);
         this.rowHeight = 200;
-        this.PopOver = this.PopOver.bind(this)
-        this.closePopover = this.closePopover.bind(this)
     }
     componentDidMount() {
         this.setState({
@@ -63,8 +66,18 @@ class Aggrid extends Component {
     onGridReady = params => {
         api = params.api;
         this.columnApi = params.columnApi;
+        api.sizeColumnsToFit()
         this.setState({
-            pageCount: api.paginationProxy.totalPages
+            pageCount: api.paginationProxy.totalPages,
+            colState: this.columnApi.getColumnState()
+        })
+    }
+    onSelectionChanged = () => {
+        this.data = api.getSelectedRows()[0]
+
+        this.setState({
+            rowSelected: true,
+            isFlyoutVisible:true
         })
     }
     onButtonClick = e => {
@@ -84,53 +97,52 @@ class Aggrid extends Component {
             filterData: updateList
         })
     }
-    closePopover = () => {
-        this.setState({
-            isPopoverOpen: false,
-        });
-    }
-    PopOver = () => {
-        this.setState({
-            isPopoverOpen: !this.state.isPopoverOpen,
-        });
-    }
-    displayPopOver = (value, col, set) => {
-        this.setState({
-            [set]: value,
-        })
-        this.columnApi.setColumnVisible(col, value)
-    }
-    updatePopOver = (e) => {
-        this.setState({
-            isFirstName: this.columnApi.getColumn('firstName').visible, isLastName: this.columnApi.getColumn('lastName').visible,
-            isBranch: this.columnApi.getColumn('branch').visible, isDob: this.columnApi.getColumn('dateOfBirth').visible,
-            isConatct: this.columnApi.getColumn('contact').visible, isEmail: this.columnApi.getColumn('email').visible,
-            isAction: this.columnApi.getColumn('action').visible, isTags: this.columnApi.getColumn('tags').visible,
-        })
-    }
+    // updatePopOver = (e) => {
+    //     this.setState({
+    //         isFirstName: this.columnApi.getColumn('firstName').visible, isLastName: this.columnApi.getColumn('lastName').visible,
+    //         isBranch: this.columnApi.getColumn('branch').visible, isDob: this.columnApi.getColumn('dateOfBirth').visible,
+    //         isConatct: this.columnApi.getColumn('contact').visible, isEmail: this.columnApi.getColumn('email').visible,
+    //         isAction: this.columnApi.getColumn('action').visible, isTags: this.columnApi.getColumn('tags').visible,
+    //     })
+    // }
     callbackPagination = (pageSize) => {
         api.paginationSetPageSize(pageSize)
         this.setState({
             paginationPageSize: pageSize
         })
     }
+    closeFlyout = (params) => {
+
+        this.setState({
+            isFlyoutVisible: params
+        })
+    }
     goToPage = (pageNumber) => {
         api.paginationGoToPage(pageNumber)
+    }
+    paginationChanged = () => {
+        if (api) {
+            this.setState({
+                pageCount: api.paginationProxy.totalPages
+            })
+        }
     }
     render() {
         const { columnDefs, defaultColDef, filterData } = this.state
         return (
-            <div className="ag-theme-balham-dark" style={{ height: '55vh', width: '100%' }}>
-                <h2 className="bg-dark display-4 text-light" >Ag-Grid</h2>
+            <div className="ag-theme-balham-dark" style={{ height: '50vh', width: '100%' }}>
                 <div style={{ float: 'right' }}>
-                    <Popover isFirstName={this.state.isFirstName} isLastName={this.state.isLastName} isBranch={this.state.isBranch} isDob={this.state.isDob} isConatct={this.state.isConatct}
+                    <DynamicPopover columnDefs={columnDefs} columnApi={this.columnApi} />
+                    {/* <Popover isFirstName={this.state.isFirstName} isLastName={this.state.isLastName} isBranch={this.state.isBranch} isDob={this.state.isDob} isConatct={this.state.isConatct}
                         isEmail={this.state.isEmail} isAction={this.state.isAction} isTags={this.state.isTags} isOpen={this.state.isPopoverOpen} closePopover={this.closePopover}
-                        PopOver={this.PopOver} displayPopOver={this.displayPopOver} />
+                        PopOver={this.PopOver} displayPopOver={this.displayPopOver} /> */}
                 </div>
                 <FilterBox searchData={this.searchData} />
+                {/* <Flyout /> */}
                 <AgGridReact columnDefs={columnDefs} rowData={filterData} defaultColDef={defaultColDef} rowDataChangeDetectionStrategy='IdentityCheck' onGridReady={this.onGridReady}
-                    rowSelection="multiple" onDragStopped={e => this.updatePopOver(e)} pagination={true}>
+                    rowSelection="multiple" onDragStopped={e => this.updatePopOver(e)} pagination={true} onPaginationChanged={this.paginationChanged} onSelectionChanged={this.onSelectionChanged}>
                 </AgGridReact>
+                {this.state.rowSelected ? <Flyout selectedRowData={this.data} closeFlyout={this.closeFlyout} isFlyoutVisible={this.state.isFlyoutVisible} /> : ''}
                 <Pagination rowPerPage={this.state.paginationPageSize} callbackPagination={this.callbackPagination} pageCount={this.state.pageCount} goToPage={this.goToPage} />
             </div >
         );

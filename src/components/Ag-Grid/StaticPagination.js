@@ -7,6 +7,7 @@ import {
     EuiFlexGroup,
     EuiFlexItem,
     EuiPopover,
+    EuiPagination
 } from '@elastic/eui';
 export default (props) => {
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -14,20 +15,15 @@ export default (props) => {
     const { rowPerPage, pageCount } = props;
     let rowCount = rowPerPage;
     const PAGE_COUNT = pageCount;
-    //console.log(pageCount)
-    //console.log(rowPerPage)
     const onButtonClick = () => setIsPopoverOpen(isPopoverOpen => !isPopoverOpen);
     const closePopover = (pageSize) => {
         setIsPopoverOpen(false);
         props.callbackPagination(pageSize)
-
     };
-
     const goToPage = pageNumber => {
         setActivePage(pageNumber);
         props.goToPage(pageNumber);
     }
-
     const button = (
         <EuiButtonEmpty
             size="s"
@@ -39,45 +35,32 @@ export default (props) => {
             Rows per page:{rowCount}
         </EuiButtonEmpty>
     );
-
     const items = [
         <EuiContextMenuItem
-            key="3 rows"
+            key="5 rows"
             icon="empty"
             onClick={() => {
-                rowCount = 3;
-                //console.log(rowCount)
-                closePopover(3);
-
+                rowCount = 5;
+                closePopover(5);
             }}>
-            3 rows
+            5 rows
     </EuiContextMenuItem>,
         <EuiContextMenuItem
-            key="4 rows"
+            key="10 rows"
             icon="empty"
             onClick={() => {
-                closePopover(4);
-
+                closePopover(10);
             }}>
-            4 rows
+            10 rows
     </EuiContextMenuItem>,
         <EuiContextMenuItem
-            key="8 rows"
-            icon="none"
-            onClick={() => {
-                closePopover(8);
-
-            }}>
-            8 rows
-    </EuiContextMenuItem>,
-        <EuiContextMenuItem
-            key="12 rows"
+            key="15 rows"
             icon="empty"
             onClick={() => {
-                closePopover(12);
+                closePopover(15);
 
             }}>
-            12 rows
+            15 rows
     </EuiContextMenuItem>,
     ];
     return (
@@ -92,6 +75,11 @@ export default (props) => {
                 </EuiPopover>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
+                <EuiPagination
+                    pageCount={PAGE_COUNT}
+                    activePage={activePage}
+                    onPageClick={activePage => goToPage(activePage)}
+                />
             </EuiFlexItem>
         </EuiFlexGroup>
     );

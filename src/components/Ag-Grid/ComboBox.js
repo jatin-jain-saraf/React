@@ -47,36 +47,37 @@ export default class ElasticComboBox extends Component {
                 },
             ],
             selectedOptions: [],
-            setSelected: [],
             isModalVisible: false,
-            setModalVisible: false,
         };
     }
 
-    closeModal = () => {
+    closeModal = (e) => {
         this.setState({
-            setModalVisible: false,
+            isModalVisible: !this.state.isModalVisible,
         });
+
     };
 
     showModal = () => {
         this.setState({
-            setModalVisible: true,
+            isModalVisible: true,
         });
     };
 
     onChange = (selectedOptions) => {
         this.setState({
-            setSelected: selectedOptions,
+            selectedOptions: selectedOptions,
         });
     };
 
     onCreateOption = (searchValue, flattenedOptions = []) => {
         if (!searchValue) {
+
             return;
         }
 
         let normalizedSearchValue = searchValue.trim().toLowerCase();
+        console.log('NNNormal', normalizedSearchValue)
 
         if (!normalizedSearchValue) {
             return;
@@ -96,14 +97,14 @@ export default class ElasticComboBox extends Component {
             });
         }
         this.setState({
-            setSelected: [...this.state.selectedOptions, newOption],
+            selectedOptions: [...this.state.selectedOptions, newOption],
         });
     };
     componentDidMount() {
         let { options } = this.state;
         this.setState({
             selectedOptions: [options[2]],
-            setSelected: [options[2]],
+            selectedOptions: [options[2]],
         });
     }
     render() {
@@ -118,10 +119,10 @@ export default class ElasticComboBox extends Component {
             </div>
         );
         let modal;
-        if (this.state.setModalVisible) {
+        if (this.state.isModalVisible) {
             modal = (
-                <EuiOverlayMask>
-                    <EuiModal onClose={this.closeModal} style={{ width: "800px" }}>
+                <EuiOverlayMask >
+                    <EuiModal onClose={e => this.closeModal(e)} style={{ width: "800px" }}>
                         <EuiModalBody>{comboBox}</EuiModalBody>
                     </EuiModal>
                 </EuiOverlayMask>
@@ -135,9 +136,9 @@ export default class ElasticComboBox extends Component {
                         iconType="plusInCircle"
                         onClick={this.showModal}
                     ></EuiButtonIcon>
+                    {modal}
                 </EuiFlexGroup>
-                {modal}
-            </div>
+            </div >
         );
     }
 }

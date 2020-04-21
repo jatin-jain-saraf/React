@@ -2,11 +2,27 @@ import React, { Component } from 'react'
 import { EuiPopover, EuiSwitch, EuiSpacer, EuiButtonIcon } from '@elastic/eui';
 
 export class Popover extends Component {
- 
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            isPopoverOpen: false,
+
+        }
+    }
+    closePopover = () => {
+        this.setState({
+            isPopoverOpen: false,
+        });
+    }
+    PopOver = () => {
+        this.setState({
+            isPopoverOpen: !this.state.isPopoverOpen,
+        });
+    }
     render() {
         const {
             isFirstName, isLastName, isBranch, isDob, isConatct, isEmail, isAction, isTags, PopOver, closePopover, displayPopOver, isOpen } = this.props;
-        console.log(PopOver)
         return (
             <>
                 <EuiPopover
@@ -14,11 +30,11 @@ export class Popover extends Component {
                     button={<EuiButtonIcon
                         iconType="managementApp"
                         iconSize="original"
-                        onClick={PopOver}
+                        onClick={this.PopOver}
                     >
                     </EuiButtonIcon>}
-                    isOpen={isOpen}
-                    closePopover={closePopover}
+                    isOpen={this.state.isPopoverOpen}
+                    closePopover={this.closePopover}
                 >
                     <div>
                         <EuiSwitch
