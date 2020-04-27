@@ -1,37 +1,40 @@
 import React, { Component } from 'react'
 import { AgGridReact } from 'ag-grid-react';
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham-dark.css';
-import '@elastic/eui/dist/eui_theme_light.css'
 import ComboBox from './ComboBox'
 import Delete from './Delete'
 import FilterBox from './FilterBox';
-// import Popover from './Popover';
 import Pagination from './StaticPagination';
 import DynamicPopover from './DynamicPopover'
 import Flyout from './Flyout';
-// import Flyout from './Flyout';
-let api = '';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-balham-dark.css';
+import '@elastic/eui/dist/eui_theme_light.css'
 class Aggrid extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            updateVisibility: [],
+            tagData: new Map(),
+            rowIndex: [],
+            selectedOptions: [],
             isFlyoutVisible: true,
+            isTags: false,
+            arr: [],
             rowSelected: false,
             colState: null, paginationPageSize: 5, pageCount: null, IsFirstNameDisplay: true, filterData: null,
-            columnDefs: [{ headerName: "FirstName", field: "firstName", hide: false, },
-            { headerName: "LastName", field: "lastName" },
-            { headerName: "Branch", field: "branch" },
-            { headerName: "DateOfBirth", field: "dateOfBirth" },
-            { headerName: "Contact", field: "contact" },
-            { headerName: "Email", field: "email" },
-            { headerName: "Actions", field: "action", cellRendererFramework: (params) => <Delete delete={this.deleteRow} /> },
-            { headerName: "Tags", field: "tags", width: 300, cellRendererFramework: () => <ComboBox /> },],
+            columnDefs: [
+                { headerName: "Tags", field: "tags", width: 300, cellRendererFramework: () => <ComboBox selectedOptions={this.state.selectedOptions} updateRowData={this.updateRowData} /> },
+                { headerName: "FirstName", field: "firstName", onCellClicked: this.onSelectionChanged },
+                { headerName: "LastName", field: "lastName", onCellClicked: this.onSelectionChanged },
+                { headerName: "Branch", field: "branch", onCellClicked: this.onSelectionChanged },
+                { headerName: "DateOfBirth", field: "dateOfBirth", onCellClicked: this.onSelectionChanged },
+                { headerName: "Contact", field: "contact", onCellClicked: this.onSelectionChanged },
+                { headerName: "Email", field: "email", onCellClicked: this.onSelectionChanged },
+                { headerName: "Actions", field: "action", cellRendererFramework: (params) => <Delete delete={this.deleteRow} /> },],
             defaultColDef: {
-                width: 150, height: 100, editable: true, resizable: true, sortable: true, filter: true, colResizeDefault: 'shift', autoHeight: true, rowHeight: 500, enablePivot: true, enableValue: true,
+                width: 200, editable: true, resizable: true, sortable: true, filter: true, colResizeDefault: 'shift', autoHeight: true, aenablePivot: true
             },
-            filterData: [],
-            rowData: [{ firstName: "Hardik", lastName: "Motwani", branch: "IT", dateOfBirth: "20-02-1998", contact: 8488866756, email: "hardik.motwani@rapidops.com" },
+            rowData: [{ firstName: "Hardik", lastName: "Motwani", branch: "IT", dateOfBirth: "20-02-1998", contact: 8488866756, email: "hardik.motwani@rapidops.com", },
             { firstName: "Meet", lastName: "Shah", branch: "CS", dateOfBirth: "15-05-1999", contact: 7982124770, email: "meet.shah@rapidops.com" },
             { firstName: "Darshan", lastName: "Raval", branch: "IT", dateOfBirth: "12-11-1997", contact: 9870912667, email: "darshan.raval@gmail.com" },
             { firstName: "Dhairya", lastName: "Shah", branch: "CS", dateOfBirth: "10-12-1996", contact: 8460556732, email: "shahdhairya@gmail.com" },
@@ -48,40 +51,52 @@ class Aggrid extends Component {
             { firstName: "Kane", lastName: "Williamson", branch: "IT", dateOfBirth: "30-03-1997", contact: 9867542310, email: "kanewilliamson@gmail.com" }],
         };
         this.searchData = this.searchData.bind(this);
-        this.rowHeight = 200;
+        this.aggridRef = React.createRef()
     }
     componentDidMount() {
         this.setState({
             filterData: this.state.rowData
         })
+
     }
     deleteRow = () => {
-        const selectedData = api.getSelectedRows();
-        api.updateRowData({ remove: selectedData });
+        const selectedData = this.api.getSelectedRows();
+        this.api.updateRowData({ remove: selectedData });
     }
     updateData = data => {
         this.setState({ rowData: data })
-        api.paginationGoToPage(4)
+        this.api.paginationGoToPage(4)
     }
     onGridReady = params => {
-        api = params.api;
+        this.api = params.api;
         this.columnApi = params.columnApi;
-        api.sizeColumnsToFit()
+        this.api.sizeColumnsToFit()
         this.setState({
-            pageCount: api.paginationProxy.totalPages,
+            pageCount: this.api.paginationProxy.totalPages,
             colState: this.columnApi.getColumnState()
         })
     }
     onSelectionChanged = () => {
-        this.data = api.getSelectedRows()[0]
-
+        this.data = this.api.getSelectedRows()[0]
+        this.id = this.api.getSelectedNodes()[0].id
         this.setState({
             rowSelected: true,
-            isFlyoutVisible:true
+            isFlyoutVisible: true,
+            isTags: false
         })
+        const { tagData } = this.state
+        for (let [k, v] of tagData) {
+            if (this.id === k) {
+                this.setState({
+                    arr: v,
+
+                    isTags: true,
+                })
+            }
+        }
     }
     onButtonClick = e => {
-        const selectedNodes = api.getSelectedNodes()
+        const selectedNodes = this.api.getSelectedNodes()
         const selectedData = selectedNodes.map(node => node.data)
         const selectedDataStringPresentation = selectedData.map(a => a.firstName + ' ' + a.lastName + ' From ' + a.branch).join('\n ')
         alert(`Selected nodes: ${'\n'}${selectedDataStringPresentation}`)
@@ -97,33 +112,51 @@ class Aggrid extends Component {
             filterData: updateList
         })
     }
-    // updatePopOver = (e) => {
-    //     this.setState({
-    //         isFirstName: this.columnApi.getColumn('firstName').visible, isLastName: this.columnApi.getColumn('lastName').visible,
-    //         isBranch: this.columnApi.getColumn('branch').visible, isDob: this.columnApi.getColumn('dateOfBirth').visible,
-    //         isConatct: this.columnApi.getColumn('contact').visible, isEmail: this.columnApi.getColumn('email').visible,
-    //         isAction: this.columnApi.getColumn('action').visible, isTags: this.columnApi.getColumn('tags').visible,
-    //     })
-    // }
+    updateRowData = (selectedOpton) => {
+        const { tagData } = this.state
+        this.setState({
+            selectedOptions: selectedOpton,
+            rowIndex: this.api.getSelectedNodes()[0].id
+        }, () => {
+            tagData.set(this.state.rowIndex, selectedOpton)
+            this.onSelectionChanged()
+        })
+
+    }
+    updatePopOver = () => {
+        const { columnDefs } = this.state
+        let b = {}
+        columnDefs.map(col => {
+            return b[col.field] = this.columnApi.getColumn(col.field).visible
+        })
+        this.setState({
+            updateVisibility: b
+        }, () => {
+            console.log(this.state.updateVisibility);
+
+        })
+
+
+    }
     callbackPagination = (pageSize) => {
-        api.paginationSetPageSize(pageSize)
+        this.api.paginationSetPageSize(pageSize)
         this.setState({
             paginationPageSize: pageSize
         })
     }
-    closeFlyout = (params) => {
-
+    closeFlyout = (params, arr) => {
         this.setState({
-            isFlyoutVisible: params
+            arr: arr,
+            isFlyoutVisible: params,
         })
     }
     goToPage = (pageNumber) => {
-        api.paginationGoToPage(pageNumber)
+        this.api.paginationGoToPage(pageNumber)
     }
     paginationChanged = () => {
-        if (api) {
+        if (this.api) {
             this.setState({
-                pageCount: api.paginationProxy.totalPages
+                pageCount: this.api.paginationProxy.totalPages
             })
         }
     }
@@ -132,17 +165,14 @@ class Aggrid extends Component {
         return (
             <div className="ag-theme-balham-dark" style={{ height: '50vh', width: '100%' }}>
                 <div style={{ float: 'right' }}>
-                    <DynamicPopover columnDefs={columnDefs} columnApi={this.columnApi} />
-                    {/* <Popover isFirstName={this.state.isFirstName} isLastName={this.state.isLastName} isBranch={this.state.isBranch} isDob={this.state.isDob} isConatct={this.state.isConatct}
-                        isEmail={this.state.isEmail} isAction={this.state.isAction} isTags={this.state.isTags} isOpen={this.state.isPopoverOpen} closePopover={this.closePopover}
-                        PopOver={this.PopOver} displayPopOver={this.displayPopOver} /> */}
+                    <DynamicPopover columnDefs={columnDefs} updatePopover={this.updatePopOver} updateVisibility={this.state.updateVisibility} columnApi={this.columnApi} />
                 </div>
                 <FilterBox searchData={this.searchData} />
-                {/* <Flyout /> */}
                 <AgGridReact columnDefs={columnDefs} rowData={filterData} defaultColDef={defaultColDef} rowDataChangeDetectionStrategy='IdentityCheck' onGridReady={this.onGridReady}
-                    rowSelection="multiple" onDragStopped={e => this.updatePopOver(e)} pagination={true} onPaginationChanged={this.paginationChanged} onSelectionChanged={this.onSelectionChanged}>
+                    rowSelection="multiple" onDragStarted={this.updatePopOver} pagination={true} onPaginationChanged={this.paginationChanged} getRowNodeId={this.state.getRowNodeId}>
                 </AgGridReact>
-                {this.state.rowSelected ? <Flyout selectedRowData={this.data} closeFlyout={this.closeFlyout} isFlyoutVisible={this.state.isFlyoutVisible} /> : ''}
+                {(this.state.rowSelected || this.state.isTags) ? <Flyout selectedRowData={this.data} arr={this.state.arr} updateRowData={this.updateRowData} selectedOptions={this.state.selectedOptions} closeFlyout={this.closeFlyout} isFlyoutVisible={this.state.isFlyoutVisible} /> : ''}
+
                 <Pagination rowPerPage={this.state.paginationPageSize} callbackPagination={this.callbackPagination} pageCount={this.state.pageCount} goToPage={this.goToPage} />
             </div >
         );
